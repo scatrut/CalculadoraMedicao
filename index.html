@@ -3,29 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Medição</title>
+    <title>Calculadora de Medição e Imagens</title>
     <style>
+        /* =========================================
+           ESTILOS GERAIS DA PÁGINA E CALCULADORA
+        ========================================= */
         body {
             font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: start;
             min-height: 100vh;
             margin: 0;
+            padding: 20px 0;
             background-color: #f4f4f4;
         }
 
-        /* Container Principal */
         .container {
-            width: 100%;
+            width: 95%;
             max-width: 600px;
             background: white;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             border: 1px solid #ccc;
         }
 
-        /* Cabeçalho Escuro */
         .header {
             background-color: #333333;
             color: white;
@@ -36,9 +38,8 @@
             text-transform: uppercase;
         }
 
-        /* Área de Instruções (Bege) */
         .instructions {
-            background-color: #ffe6cc; /* Tom aproximado do bege da imagem */
+            background-color: #ffe6cc;
             padding: 15px;
             text-align: center;
             font-size: 0.95rem;
@@ -46,7 +47,6 @@
             color: #000;
         }
 
-        /* Linhas da Tabela */
         .row {
             display: flex;
             justify-content: space-between;
@@ -61,7 +61,6 @@
             border-bottom: none;
         }
 
-        /* Input Amarelo */
         .input-group {
             display: flex;
             align-items: center;
@@ -69,7 +68,7 @@
         }
 
         input[type="number"] {
-            background-color: #fff2cc; /* Amarelo da célula */
+            background-color: #fff2cc;
             border: 1px solid #ccc;
             padding: 5px;
             font-size: 1.1rem;
@@ -78,29 +77,107 @@
             font-weight: bold;
         }
 
-        /* Estilo dos Resultados */
         .result-value {
             font-weight: bold;
         }
 
-        /* Área das Imagens */
+        /* =========================================
+           ESTILOS DO TÍTULO E MINIATURAS
+        ========================================= */
+        
+        /* Novo estilo para o título das imagens */
+        .images-title {
+            text-align: center;
+            font-weight: bold;
+            background-color: #333333; /* Cor de fundo (Cinza escuro) */
+            color: #ffffff;            /* Cor da fonte (Branco) */
+            margin-top: 20px; /* Espaço acima do título */
+            margin-bottom: 20px; /* Espaço entre o título e as imagens */
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+	    padding: 20px;
+        }
+
         .images-container {
-            margin-top: 30px;
+            /* margin-top removido daqui e controlado pelo título acima */
             display: flex;
             gap: 20px;
             justify-content: center;
             flex-wrap: wrap;
         }
 
-        .img-placeholder {
-            width: 250px;
-            height: 150px;
-            background-color: #ddd;
-            display: flex;
+        /* --- CONFIGURAÇÃO DE TAMANHO DAS MINIATURAS AQUI --- */
+        .img-thumbnail {
+            width: 250px;  /* Largura da miniatura */
+            height: 200px; /* Altura da miniatura */
+            
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease-in-out, border-color 0.2s;
+        }
+
+        .img-thumbnail:hover {
+            transform: scale(1.05);
+            border-color: #333;
+        }
+
+        /* =========================================
+           ESTILOS DO LIGHTBOX (IMAGEM EXPANDIDA)
+        ========================================= */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 50px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            border: 2px dashed #999;
-            object-fit: cover;
+        }
+
+        .lightbox-content {
+            margin: auto;
+            display: block;
+            /* --- CONFIGURAÇÃO DE TAMANHO MÁXIMO DA IMAGEM EXPANDIDA --- */
+            max-width: 90%;
+            max-height: 85vh;
+            
+            width: auto;
+            height: auto;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            animation: zoom 0.3s;
+        }
+
+        @keyframes zoom {
+            from {transform:scale(0.7); opacity: 0;}
+            to {transform:scale(1); opacity: 1;}
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
         }
 
     </style>
@@ -140,23 +217,33 @@
         </div>
     </div>
 
+    <div class="images-title">CLIQUE NAS IMAGENS ABAIXO PARA INSTRUÇÕES DE MEDIÇÃO</div>
+
     <div class="images-container">
-        <img src="02.jpg">
+        <img src="02.jpg" 
+             alt="Imagem do Ambiente 1" 
+             class="img-thumbnail" 
+             onclick="openLightbox(this.src)">
         
-        <img src="01.jpg">
+        <img src="01.jpg" 
+             alt="Imagem do Ambiente 2" 
+             class="img-thumbnail" 
+             onclick="openLightbox(this.src)">
+    </div>
+
+    <div id="myLightbox" class="lightbox" onclick="closeLightbox(event)">
+        <span class="close-btn" onclick="closeLightbox(event)">&times;</span>
+        <img class="lightbox-content" id="imgExpanded">
     </div>
 
     <script>
+        // Lógica da Calculadora
         function calculateValues() {
-            // Pega o valor do input
             const depth = parseFloat(document.getElementById('inputDepth').value);
-            
-            // Elementos de resultado
             const resA = document.getElementById('resultA');
             const resB = document.getElementById('resultB');
             const resC = document.getElementById('resultC');
 
-            // Verifica se é um número válido
             if (isNaN(depth)) {
                 resA.innerText = "0,00";
                 resB.innerText = "0,00";
@@ -164,20 +251,40 @@
                 return;
             }
 
-            // Cálculos conforme a imagem
             const valA = depth * 0.40;
             const valB = depth * 0.50;
             const valC = depth * 0.75;
 
-            // Formatação para padrão Brasileiro (vírgula decimal)
             const formatNumber = (num) => {
                 return num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             };
 
-            // Atualiza o HTML
             resA.innerText = formatNumber(valA);
             resB.innerText = formatNumber(valB);
             resC.innerText = formatNumber(valC);
+        }
+
+        // Lógica do Lightbox (Expandir Imagem)
+        
+        // Função para abrir o lightbox
+        function openLightbox(imageSrc) {
+            const lightbox = document.getElementById('myLightbox');
+            const expandedImg = document.getElementById('imgExpanded');
+            
+            // Define a fonte da imagem expandida para ser a mesma da miniatura clicada
+            expandedImg.src = imageSrc;
+            // Mostra o container do lightbox (usando flex para centralizar)
+            lightbox.style.display = "flex";
+        }
+
+        // Função para fechar o lightbox
+        function closeLightbox(event) {
+            // Verifica se o clique foi no botão X ou no fundo escuro (não na imagem em si)
+            // Se o usuário clicar na própria imagem grande, ela não deve fechar.
+            if (event.target.id === 'imgExpanded') {
+                return;
+            }
+            document.getElementById('myLightbox').style.display = "none";
         }
     </script>
 
