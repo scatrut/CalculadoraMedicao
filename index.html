@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Medição</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        /* Container Principal */
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border: 1px solid #ccc;
+        }
+
+        /* Cabeçalho Escuro */
+        .header {
+            background-color: #333333;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+        }
+
+        /* Área de Instruções (Bege) */
+        .instructions {
+            background-color: #ffe6cc; /* Tom aproximado do bege da imagem */
+            padding: 15px;
+            text-align: center;
+            font-size: 0.95rem;
+            border-bottom: 2px solid #ccc;
+            color: #000;
+        }
+
+        /* Linhas da Tabela */
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #000;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .row:last-child {
+            border-bottom: none;
+        }
+
+        /* Input Amarelo */
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        input[type="number"] {
+            background-color: #fff2cc; /* Amarelo da célula */
+            border: 1px solid #ccc;
+            padding: 5px;
+            font-size: 1.1rem;
+            width: 100px;
+            text-align: right;
+            font-weight: bold;
+        }
+
+        /* Estilo dos Resultados */
+        .result-value {
+            font-weight: bold;
+        }
+
+        /* Área das Imagens */
+        .images-container {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .img-placeholder {
+            width: 250px;
+            height: 150px;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #999;
+            object-fit: cover;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            CALCULADORA DE MEDIÇÃO
+        </div>
+        
+        <div class="instructions">
+            Escreva na célula amarela o valor da profundidade total (d) em metros do seu ambiente para obter os valores de cada medição necessária.
+        </div>
+
+        <div class="row">
+            <span>Profundidade total (d) =</span>
+            <div class="input-group">
+                <input type="number" id="inputDepth" placeholder="0" step="0.01" oninput="calculateValues()">
+                <span>m</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <span>Cenário A - 0,4d (40% - 200lux) =</span>
+            <span><span id="resultA">0,00</span> m</span>
+        </div>
+
+        <div class="row">
+            <span>Cenário B - 0,5d (50% - 60lux) =</span>
+            <span><span id="resultB">0,00</span> m</span>
+        </div>
+
+        <div class="row">
+            <span>Cenário C - 0,75d (75% - 60lux) =</span>
+            <span><span id="resultC">0,00</span> m</span>
+        </div>
+    </div>
+
+    <div class="images-container">
+        <img src="02.jpg">
+        
+        <img src="01.jpg">
+    </div>
+
+    <script>
+        function calculateValues() {
+            // Pega o valor do input
+            const depth = parseFloat(document.getElementById('inputDepth').value);
+            
+            // Elementos de resultado
+            const resA = document.getElementById('resultA');
+            const resB = document.getElementById('resultB');
+            const resC = document.getElementById('resultC');
+
+            // Verifica se é um número válido
+            if (isNaN(depth)) {
+                resA.innerText = "0,00";
+                resB.innerText = "0,00";
+                resC.innerText = "0,00";
+                return;
+            }
+
+            // Cálculos conforme a imagem
+            const valA = depth * 0.40;
+            const valB = depth * 0.50;
+            const valC = depth * 0.75;
+
+            // Formatação para padrão Brasileiro (vírgula decimal)
+            const formatNumber = (num) => {
+                return num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            };
+
+            // Atualiza o HTML
+            resA.innerText = formatNumber(valA);
+            resB.innerText = formatNumber(valB);
+            resC.innerText = formatNumber(valC);
+        }
+    </script>
+
+</body>
+</html>
